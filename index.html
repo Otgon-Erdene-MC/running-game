@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Running Game</title>
+
+<style>
+body {
+  margin: 0;
+  background: #111;
+  text-align: center;
+  color: white;
+  font-family: Arial;
+}
+
+h2 { margin: 10px; }
+
+.main {
+  width: 1500px;
+  height: 700px;
+  margin: auto;
+  background: url("road.jpg") repeat-x;
+  background-size: cover;
+  border: 5px solid white;
+  position: relative;
+  overflow: hidden;
+  
+
+  animation: trackMove 0.6s linear infinite;
+  animation-play-state: paused;
+}
+
+@keyframes trackMove {
+  from { background-position: 0 0; }
+  to { background-position: -500px 0; }
+}
+
+.runner {
+  width: 120px;
+  position: absolute;
+  left: 0;
+  transition: left 0.1s;
+  margin-top: 0px;
+}
+
+#runner1 { top: 200px; }
+#runner2 { top: 350px; }
+
+.run {
+  animation: runJump 0.15s;
+}
+
+@keyframes runJump {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+
+.finish {
+  position: absolute;
+  right: 100px;
+  top: 0;
+  width: 12px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    white 0px,
+    white 20px,
+    black 20px,
+    black 40px
+  );
+}
+
+button {
+  font-size: 18px;
+  padding: 10px 25px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+#winner {
+  font-size: 30px;
+  color: yellow;
+}
+</style>
+</head>
+
+<body onkeypress="run(event)">
+<p>🔴 R = Улаан | 🔵 Y = Цэнхэр</p>
+<button onclick="startGame()">▶ Start / Restart</button>
+
+<div id="winner"></div>
+
+<div class="main" id="track">
+  <div class="finish"></div>
+  <img src="runner1.webp" class="runner" id="runner1">
+  <img src="runner2.webp" class="runner" id="runner2">
+</div>
+
+<script>
+let r1 = document.getElementById("runner1");
+let r2 = document.getElementById("runner2");
+let track = document.getElementById("road");
+let win = document.getElementById("winner");
+
+let pos1 = 0;
+let pos2 = 0;
+let gameOver = false;
+
+function startGame() {
+  pos1 = 0;
+  pos2 = 0;
+  gameOver = false;
+  r1.style.left = "0px";
+  r2.style.left = "0px";
+  win.innerHTML = "";
+  track.style.animationPlayState = "running";
+}
+
+function run(e) {
+  if (gameOver) return;
+
+  let speed = Math.floor(Math.random() * 35) + 15;
+
+  if (e.key === "r") {
+    pos1 += speed;
+    moveRunner(r1, pos1);
+  }
+
+  if (e.key === "y") {
+    pos2 += speed;
+    moveRunner(r2, pos2);
+  }
+
+  if (pos1 >= 1300) finish("🔴 Улаан тамирчин хожлоо!");
+  if (pos2 >= 1300) finish("🔵 Цэнхэр тамирчин хожлоо!");
+}
+
+function moveRunner(runner, pos) {
+  runner.style.left = pos + "px";
+  runner.classList.add("run");
+  setTimeout(() => runner.classList.remove("run"), 150);
+}
+
+function finish(text) {
+  gameOver = true;
+  win.innerHTML = "🏆 " + text;
+  track.style.animationPlayState = "paused";
+}
+</script>
+
+</body>
+</html>
